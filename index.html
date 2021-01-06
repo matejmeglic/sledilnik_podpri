@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Podpri Sledilnik DEMO</title>
+    <meta name="description" content="A demo of Stripe client-only Checkout" />
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/global.css" />
+    <!-- Load Stripe.js on your website. -->
+    <script src="https://js.stripe.com/v3/"></script>
+  </head>
+
+  <body>
+    <div class="sr-root">
+      <div class="sr-main" style="display: flex">
+        <div class="sr-container">
+          <section class="container">
+            <h1>Projekt Sledilnik želim podpirati mesečno</h1>
+            <button
+              data-checkout-mode="subscription"
+              data-price-id="price_1I6dUEEUtJJGJFIUM4slrZ9g"
+            >
+              5 EUR / mesec
+            </button>
+            <button
+              data-checkout-mode="subscription"
+              data-price-id="price_1I6dUEEUtJJGJFIUeXsfJpCV"
+            >
+              10 EUR / mesec
+            </button>
+            <button
+              data-checkout-mode="subscription"
+              data-price-id="price_1I6dUEEUtJJGJFIUh5TtL1tg"
+            >
+              15 EUR / mesec
+            </button>
+            <button
+              data-checkout-mode="subscription"
+              data-price-id="price_1I6dUEEUtJJGJFIURHozzi1V"
+            >
+              20 EUR / mesec
+            </button>
+            <button
+              data-checkout-mode="subscription"
+              data-price-id="price_1I6dUEEUtJJGJFIUD8sXIH3E"
+            >
+              30 EUR / mesec
+            </button>
+            <button
+              data-checkout-mode="subscription"
+              data-price-id="price_1I6dUEEUtJJGJFIUnmagHiRR"
+            >
+              50 EUR / mesec
+            </button>
+            <button
+              data-checkout-mode="subscription"
+              data-price-id="price_1I6dUFEUtJJGJFIUcWNRbSDC"
+            >
+              100 EUR / mesec
+            </button>
+          </section>
+          <section class="container">
+            <h1>Sledilnikovo delo želim podpreti enkratno</h1>
+            <img src="sledilnik_donation_qr.png" width="350" height="350" /><a
+              href="sledilnik_donation_sepa.png"
+            >
+              <img src="sledilnik_donation_sepa.png" width="350" height="175"
+            /></a>
+          </section>
+        </div>
+
+        <div id="error-message"></div>
+      </div>
+
+      <div class="banner">
+        <span>
+          Znanstveno društvo Sledilnik | Celovška 111, 1000 Ljubljana | SI56
+          6100 0002 5152 059 | Delavska hranilnica d.d.
+        </span>
+      </div>
+    </div>
+
+    <script>
+      // Replace with your own publishable key: https://dashboard.stripe.com/test/apikeys
+      var PUBLISHABLE_KEY =
+        "pk_test_51I6cVwEUtJJGJFIUgsLpXxbk4DHr2g8Q2ZCIUlzSWbVBtWbcEZJdJuRhyjCxO0xFZdBecREiHx2zirBDPFN1qoeQ00A5Wd3bak";
+      // Replace with the domain you want your users to be redirected back to after payment
+      var DOMAIN = location.href.replace(/[^/]*$/, "");
+
+      var stripe = Stripe(PUBLISHABLE_KEY);
+
+      // Handle any errors from Checkout
+      var handleResult = function (result) {
+        if (result.error) {
+          var displayError = document.getElementById("error-message");
+          displayError.textContent = result.error.message;
+        }
+      };
+
+      document.querySelectorAll("button").forEach(function (button) {
+        button.addEventListener("click", function (e) {
+          var mode = e.target.dataset.checkoutMode;
+          var priceId = e.target.dataset.priceId;
+          var items = [{ price: priceId, quantity: 1 }];
+
+          // Make the call to Stripe.js to redirect to the checkout page
+          // with the sku or plan ID.
+          stripe
+            .redirectToCheckout({
+              mode: mode,
+              lineItems: items,
+              successUrl:
+                DOMAIN + "success.html?session_id={CHECKOUT_SESSION_ID}",
+              cancelUrl:
+                DOMAIN + "canceled.html?session_id={CHECKOUT_SESSION_ID}",
+            })
+            .then(handleResult);
+        });
+      });
+    </script>
+  </body>
+</html>
